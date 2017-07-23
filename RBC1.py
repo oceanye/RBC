@@ -12,7 +12,7 @@ Reb_Size=array([28,28]) # Longitudinal rebar size Upper, Buttom
 
 
 Beam_Info=np.concatenate((Sec_Info,Reb_Info), axis=0)
-
+#test github
 
 def uni_RB(Beam_Info):
     if Beam_Info[1,1]<Beam_Info[1,0]:
