@@ -6,13 +6,13 @@ import math
 #      -------
 #
 
-Sec_Info=array([[600,800],[1,0],[2,0]]) # section_size , [x1,y1],[x2,y2]
-Reb_Info=array([[50,59],[80,0],[2.5,1.8]])  # longitudinal Rebar UpStart UpEnd; longitudinal Buttom ,0;  Stirrup1 + Stirrup2
-Reb_Size=array([28,28]) # Longitudinal rebar size Upper, Buttom
+Sec_Info=[[600,800],[1,0],[2,0]] # section_size , [x1,y1],[x2,y2]
+Reb_Info=[[50,59],[80,0],[2.5,1.8]]  # longitudinal Rebar UpStart UpEnd; longitudinal Buttom ,0;  Stirrup1 + Stirrup2
+Reb_Size=[28,28] # Longitudinal rebar size Upper, Buttom
 
 
 Beam_Info=np.concatenate((Sec_Info,Reb_Info), axis=0)
-#test github2
+#test github3
 
 def uni_RB(Beam_Info):
     if Beam_Info[1,1]<Beam_Info[1,0]:
@@ -46,13 +46,13 @@ def SReb_area(data):
 def Simple_Beam(Beam_Info,Reb_Size):
     A = np.zeros([4, 3])
     print(A)
-    LR_up1=np.array(LReb_cal(Beam_Info[3,0],Reb_Size[0]))
-    LR_up2=np.array(LReb_cal(Beam_Info[3,1],Reb_Size[0]))
-    LR_buttom=np.array(LReb_cal(Beam_Info[4,0],Reb_Size[1]))
-    SR1   =np.array(SReb_cal(Beam_Info[0,0],Beam_Info[5,0],100,2))
-    SR2   =np.array(SReb_cal(Beam_Info[0,0],Beam_Info[5,1],100,2))
-    rebar_table = np.array([LR_up1,LR_up2,LR_buttom,SR1,SR2])
-    print np.shape(A)
+    LR_up1=LReb_cal(Beam_Info[3,0],Reb_Size[0])
+    LR_up2=LReb_cal(Beam_Info[3,1],Reb_Size[0])
+    LR_buttom=LReb_cal(Beam_Info[4,0],Reb_Size[1])
+    SR1   =SReb_cal(Beam_Info[0,0],Beam_Info[5,0],100,2)
+    SR2   =SReb_cal(Beam_Info[0,0],Beam_Info[5,1],100,2)
+    rebar_table = [LR_up1,LR_up2,LR_buttom,SR1,SR2]
+    print size(A)
 #    print np.shape(rebar_table[0,3])
     return rebar_table
 
@@ -65,7 +65,7 @@ def Real_Simple_Beam(Sec_info,cal_rebar_table):
     SR1 = SReb_area(cal_rebar_table[3])
     SR2 = SReb_area(cal_rebar_table[4])
     Ac=Sec_info[0,0]*Sec_info[0,1]
-    As = np.array([LB_up1,LB_up2,LB_buttom,SR1,SR2])      #reinforcement area
+    As = [LB_up1,LB_up2,LB_buttom,SR1,SR2]     #reinforcement area
     p  = As/[Ac,Ac,Ac,1,1]                                # reinforcement ratio
     real_reb_info=[As,p]
     return real_reb_info
@@ -90,7 +90,7 @@ def Count_most(A):
 
 
 def Sort_CB_from_SB(SB_list):
-    t = shape(SB_list)
+    t = len(SB_list)
     N_span = t[0]
     Coord=np.zeros((N_span-1,2))
     print shape(Coord)
@@ -105,7 +105,7 @@ def Sort_Coord(coord):
     [x0,y0]=[-1e10,-1e10]
     di=np.zeros(len(coord))
     for i in range(len(coord)-1):
-        di[i]=math.sqrt((coord[i][0]-x0)*(coord[i][0]-x0)+(coord[i][1]-y0)*(coord[i][1]-y0))
+        di[i]=math.sqrt((coord[i][0]-x0)**2+(coord[i][1]-y0)**2)
         print di[i]
     index=np.argsort(di)
     return index
