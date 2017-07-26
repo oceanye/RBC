@@ -1,6 +1,7 @@
 from numpy import *
 import numpy as np
-import math
+from test.py import *
+
 
 #   LR11     LR12
 #      -------
@@ -44,7 +45,7 @@ def SReb_area(data):
     return A
 
 def Simple_Beam(Beam_Info,Reb_Size):
-    A = np.zeros([4, 3])
+    A=make_nd_list([2,3],2,0)
     print(A)
     LR_up1=LReb_cal(Beam_Info[3,0],Reb_Size[0])
     LR_up2=LReb_cal(Beam_Info[3,1],Reb_Size[0])
@@ -89,6 +90,7 @@ def Count_most(A):
     return
 
 
+
 def Sort_CB_from_SB(SB_list):
     t = len(SB_list)
     N_span = t[0]
@@ -96,8 +98,6 @@ def Sort_CB_from_SB(SB_list):
     print shape(Coord)
     for p in range(N_span-1):
         Coord[p]=SB_list[0][p][1:2]
-
-
     return index
 
 
@@ -109,6 +109,12 @@ def Sort_Coord(coord):
         print di[i]
     index=np.argsort(di)
     return index
+
+def make_nd_list(dim,n,initial_value):
+    if n == 1:
+        return [initial_value for i in range(dim[n - 1])]
+    else:
+        return [make_nd_list(dim, n - 1, initial_value) for i in range(dim[n - 1])]
 
 TB=Simple_Beam(Beam_Info,Reb_Size)
 TB2=Real_Simple_Beam(Sec_Info,TB)
