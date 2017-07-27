@@ -1,6 +1,6 @@
 from numpy import *
 import numpy as np
-from test.py import *
+from math import *
 
 
 #   LR11     LR12
@@ -65,7 +65,7 @@ def Real_Simple_Beam(Sec_info,cal_rebar_table):
     LB_buttom=LReb_area(cal_rebar_table[2])
     SR1 = SReb_area(cal_rebar_table[3])
     SR2 = SReb_area(cal_rebar_table[4])
-    Ac=Sec_info[0,0]*Sec_info[0,1]
+    Ac=Sec_info[0][0]*Sec_info[0][1]
     As = [LB_up1,LB_up2,LB_buttom,SR1,SR2]     #reinforcement area
     p  = As/[Ac,Ac,Ac,1,1]                                # reinforcement ratio
     real_reb_info=[As,p]

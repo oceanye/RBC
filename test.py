@@ -26,3 +26,6 @@ print x[1][2]
 dim=[2,3,4]
 B=make_nd_list(dim,3,1)
 print B
+
+A=[1,2,3,4]
+print (i/2 for i in A)
