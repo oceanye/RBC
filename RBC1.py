@@ -1,5 +1,5 @@
-from numpy import *
-import numpy as np
+#from numpy import *
+#import numpy as np
 from math import *
 
 
@@ -7,15 +7,19 @@ from math import *
 #      -------
 #
 
-Sec_Info=[[600,800],[1,0],[2,0]] # section_size , [x1,y1],[x2,y2]
+Sec_Info=[[600,800],[1,1],[2,2],[0,0]] # section_size , [x1,y1],[x2,y2],filp-0/1
 Reb_Info=[[50,59],[80,0],[2.5,1.8]]  # longitudinal Rebar UpStart UpEnd; longitudinal Buttom ,0;  Stirrup1 + Stirrup2
-Reb_Size=[28,28] # Longitudinal rebar size Upper, Buttom
+Reb_Size=[28,28,10] # Longitudinal rebar size Upper, Buttom,Stirrup
+Beam_Info=Sec_Info+Reb_Info
+
+Reb_Info2=[[22,49],[56,0],[1.5,1.2]]
+Beam_Info2=Sec_Info+Reb_Info2
 
 
-Beam_Info=np.concatenate((Sec_Info,Reb_Info), axis=0)
-#test github3
+print Beam_Info
 
 def uni_RB(Beam_Info):
+    #flip the start and end rebar coord
     if Beam_Info[1,1]<Beam_Info[1,0]:
         Beam_Info[1, [0, 1]] = Beam_Info[1, [1, 0]]
         Beam_Info[2, [0, 1]] = Beam_Info[2, [1, 0]]
@@ -47,13 +51,13 @@ def SReb_area(data):
 def Simple_Beam(Beam_Info,Reb_Size):
     A=make_nd_list([2,3],2,0)
     print(A)
-    LR_up1=LReb_cal(Beam_Info[3,0],Reb_Size[0])
-    LR_up2=LReb_cal(Beam_Info[3,1],Reb_Size[0])
-    LR_buttom=LReb_cal(Beam_Info[4,0],Reb_Size[1])
-    SR1   =SReb_cal(Beam_Info[0,0],Beam_Info[5,0],100,2)
-    SR2   =SReb_cal(Beam_Info[0,0],Beam_Info[5,1],100,2)
+    LR_up1=LReb_cal(Beam_Info[4][0],Reb_Size[0])
+    LR_up2=LReb_cal(Beam_Info[4][1],Reb_Size[0])
+    LR_buttom=LReb_cal(Beam_Info[5][0],Reb_Size[1])
+    SR1   =SReb_cal(Beam_Info[0][0],Beam_Info[6][0],100,2)
+    SR2   =SReb_cal(Beam_Info[0][0],Beam_Info[6][1],100,2)
     rebar_table = [LR_up1,LR_up2,LR_buttom,SR1,SR2]
-    print size(A)
+    print A
 #    print np.shape(rebar_table[0,3])
     return rebar_table
 
@@ -116,55 +120,70 @@ def make_nd_list(dim,n,initial_value):
     else:
         return [make_nd_list(dim, n - 1, initial_value) for i in range(dim[n - 1])]
 
-TB=Simple_Beam(Beam_Info,Reb_Size)
-TB2=Real_Simple_Beam(Sec_Info,TB)
-SB=(Sec_Info,TB2)
+TB=[]
 
-SB1=(Sec_Info*2,TB2*2)
-SB2=(Sec_Info*3,TB2*3)
+TB[0]=Simple_Beam(Beam_Info,Reb_Size)
+TB[1]=Simple_Beam(Beam_Info2,Reb_Size)
 
-TB_list=(SB,SB1)
+n_SB=len(TB)
+TB_con=[]
+for i in TB:
+    TB_con=TB_con+i
 
+def Condense_Simple_Beam(TB_con):
+    A=min(TB_con[:][1][0])
+    print A
 
-print "ouput_test"
+##
+##
+##TB2=Real_Simple_Beam(Sec_Info,TB)
+##SB=(Sec_Info,TB2)
+##
+##SB1=(Sec_Info*2,TB2*2)
+##SB2=(Sec_Info*3,TB2*3)
+##
+##TB_list=(SB,SB1)
+##
+##
+##print "ouput_test"
+##
+##SB_list=[SB,SB1,SB2]
+###Arrange_Cont_Beam(SB_list)
+##print ("shape_SB_list" ,shape(SB_list))
+##print SB_list
+##
+##print ("size C")
+##C1=SB_list[0][0][1]  # SB1 [x1,y1]
+##C2=SB_list[0][0][2]  # SB1 [x2,y2]
+##C3=SB_list[1][0][1]  # SB2 [x1,y1]
+##C4=SB_list[1][0][2]  # SB2 [x2,y2]
+##C=([C1,C2,C3,C4])
+##
+##C_l=np.zeros(2)
+##
+##
+##
+##for i in range(1,2):
+##    C_l[i]=SB_list[i-1][0][1]
 
-SB_list=[SB,SB1,SB2]
-#Arrange_Cont_Beam(SB_list)
-print ("shape_SB_list" ,shape(SB_list))
-print SB_list
-
-print ("size C")
-C1=SB_list[0][0][1]  # SB1 [x1,y1]
-C2=SB_list[0][0][2]  # SB1 [x2,y2]
-C3=SB_list[1][0][1]  # SB2 [x1,y1]
-C4=SB_list[1][0][2]  # SB2 [x2,y2]
-C=([C1,C2,C3,C4])
-
-C_l=np.zeros(2)
-
-
-
-for i in range(1,2):
-    C_l[i]=SB_list[i-1][0][1]
-
-print "C1"
-print C1
-
-print "C_l"
-print C_l
-
-print "C"
-print C
-print shape(C)
-
-
-
-print("size")
+##print "C1"
+##print C1
+##
+##print "C_l"
+##print C_l
+##
+##print "C"
+##print C
+##print shape(C)
+##
+##
+##
+##print("size")
 
 
 #Real_TB=Real_Simple_Beam(Sec_Info,TB)
-print(shape(TB[0]))
-print(TB2)
-print(TB)
-
-print LReb_area(TB[0])
+##print(shape(TB[0]))
+##print(TB2)
+##print(TB)
+##
+##print LReb_area(TB[0])
