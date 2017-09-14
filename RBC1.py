@@ -1,6 +1,7 @@
 #from numpy import *
 #import numpy as np
 from math import *
+import copy
 
 
 #   LR11     LR12
@@ -12,7 +13,7 @@ Reb_Info=[[50,59],[80,0],[2.5,1.8]]  # longitudinal Rebar UpStart UpEnd; longitu
 Reb_Size=[28,28,10] # Longitudinal rebar size Upper, Buttom,Stirrup
 Beam_Info=Sec_Info+Reb_Info
 
-Reb_Info2=[[22,49],[56,0],[1.5,1.2]]
+Reb_Info2=[[22,79],[96,0],[1.5,1.2]]
 Beam_Info2=Sec_Info+Reb_Info2
 
 
@@ -114,26 +115,76 @@ def Sort_Coord(coord):
     index=np.argsort(di)
     return index
 
-def make_nd_list(dim,n,initial_value):
+def make_nd_list(dim,n,initial_value):# make_nd_list([col,row],len([col,row],0)
     if n == 1:
         return [initial_value for i in range(dim[n - 1])]
     else:
         return [make_nd_list(dim, n - 1, initial_value) for i in range(dim[n - 1])]
 
-TB=[]
 
-TB[0]=Simple_Beam(Beam_Info,Reb_Size)
-TB[1]=Simple_Beam(Beam_Info2,Reb_Size)
 
-n_SB=len(TB)
-TB_con=[]
-for i in TB:
-    TB_con=TB_con+i
+TB1=Simple_Beam(Beam_Info,Reb_Size)
+TB2=Simple_Beam(Beam_Info2,Reb_Size)
 
-def Condense_Simple_Beam(TB_con):
-    A=min(TB_con[:][1][0])
-    print A
+TB=[TB1,TB2]
 
+print TB
+
+
+def cmp_list3_nx2(TB,ind,par):
+    n_i=len(TB)
+    n=n_i
+    if ind =="max": #max
+        m_t=0
+        for t in range(0,n):
+            if TB[t][par][0]>m_t:m_t=TB[t][par][0]
+    elif ind =="min": #min
+        m_t=999
+        for t in range(0,n):
+            if TB[t][par][0]<m_t:m_t=TB[t][par][0]
+    else:
+        m_t=99999
+    return m_t
+
+
+
+
+
+def Condense_Simple_Beam(TB):
+    ##CSB_factor=[CSB_top,CSB_buttom,CSB_Str]
+    [n_i,n_j,n_k]=[len(TB),len(TB[0]),len(TB[0][0])]
+    CSB_factor=make_nd_list([n_j,1],1,0)
+    for j in range(n_j):
+        CSB_factor[j]=cmp_list3_nx2(TB,"min",j)
+    [CSB_factor[1],CSB_factor[2]]=[max(CSB_factor[1],CSB_factor[2]),max(CSB_factor[1],CSB_factor[2])]
+    CSB_RB=copy.deepcopy(TB[0])
+    TB_disp=copy.deepcopy(TB)
+    for j in range(n_j):
+        CSB_RB[j][0]=CSB_factor[j]
+    for i in range(n_i):
+        for j in range(n_j):
+         if TB_disp[i][j][0]<=CSB_factor[j]:
+             TB_disp[i][j][0]=[]
+
+    del(CSB_RB[2])
+    #print TB
+    #print TB_disp
+    #print CSB_RB
+    CSB_RB_disp=copy.deepcopy(CSB_RB)
+    print CSB_RB_disp
+    for j in range(n_j-1):
+        for k in range(n_k):
+            CSB_RB_disp[j][k]=str(CSB_RB_disp[j][k])
+    for i in range(n_i):
+        for j in range(n_j):
+            for k in range(n_k):
+                TB_disp[i][j][k]=str(TB_disp[i][j][k])
+    print CSB_RB_disp
+    return [CSB_RB,CSB_RB_disp,TB_disp]
+
+
+
+Condense_Simple_Beam(TB)
 ##
 ##
 ##TB2=Real_Simple_Beam(Sec_Info,TB)
